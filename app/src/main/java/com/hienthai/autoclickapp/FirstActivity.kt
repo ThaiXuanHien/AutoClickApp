@@ -31,40 +31,37 @@ class FirstActivity : AppCompatActivity() {
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:$packageName")
         ).apply {
-            putExtra(KEY_REQUEST_CODE, REQUEST_DRAW_OVER_OTHER_APP)
+            //putExtra(KEY_REQUEST_CODE, REQUEST_DRAW_OVER_OTHER_APP)
+//            setResult(REQUEST_DRAW_OVER_OTHER_APP, intent)
         }
-        resultLauncher.launch(intent)
+        resultDrawOverLayLauncher.launch(intent)
     }
 
-    private var resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-
-            when (result.data?.extras?.getInt(KEY_REQUEST_CODE)) {
-                REQUEST_DRAW_OVER_OTHER_APP -> {
-                    if (!Settings.canDrawOverlays(this)) {
-                        Toast.makeText(
-                            this,
-                            "Cần cấp quyền hiển thị trên app khác",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        return@registerForActivityResult
-                    }
-                    checkAccessibilitySetting()
-                }
-                REQUEST_ACCESSIBILITY_SERVICE -> {
-                    if (!isAccessibilityEnabled()) {
-                        Toast.makeText(
-                            this,
-                            "Cần cấp quyền Accessibility Service",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        return@registerForActivityResult
-                    }
-                    goToMainActivity()
-                }
+    private var resultDrawOverLayLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(
+                    this,
+                    "Cần cấp quyền hiển thị trên app khác",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                return@registerForActivityResult
             }
+            checkAccessibilitySetting()
+        }
+    private var resultAccessibilityServiceLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (!isAccessibilityEnabled()) {
+                Toast.makeText(
+                    this,
+                    "Cần cấp quyền Accessibility Service",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                return@registerForActivityResult
+            }
+            goToMainActivity()
         }
 
     private fun checkAccessibilitySetting() {
@@ -80,8 +77,9 @@ class FirstActivity : AppCompatActivity() {
     }
 
     private fun openAccessibilityServiceSettings() {
-        resultLauncher.launch(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-            putExtra(KEY_REQUEST_CODE, REQUEST_ACCESSIBILITY_SERVICE)
+        resultAccessibilityServiceLauncher.launch(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+            //putExtra(KEY_REQUEST_CODE, REQUEST_ACCESSIBILITY_SERVICE)
+//            setResult(REQUEST_ACCESSIBILITY_SERVICE, intent)
         })
     }
 
